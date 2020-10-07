@@ -27,7 +27,7 @@ First install and configure Helm according to the [documentation](https://helm.s
 
     helm repo add vernemq https://vernemq.github.io/docker-vernemq
 
-You can now deploy VerneMQ on your Kubernetes cluster:
+Then edit your values.yaml to use micwy/vernemq:1.11.0-alpine rather than the official image. You can now deploy VerneMQ on your Kubernetes cluster:
 
     helm install vernemq/vernemq
 
@@ -35,21 +35,21 @@ For more information, check out the Helm chart [README](helm/vernemq/README.md).
 
 ### Using pure Docker commands
 
-    docker run -e "DOCKER_VERNEMQ_ACCEPT_EULA=yes" --name vernemq1 -d vernemq/vernemq
+    docker run --name vernemq1 -d micwy/vernemq:1.11.0-alpine
 
 Sometimes you need to configure a forwarding for ports (on a Mac for example):
 
-    docker run -p 1883:1883 -e "DOCKER_VERNEMQ_ACCEPT_EULA=yes" --name vernemq1 -d vernemq/vernemq
+    docker run -p 1883:1883 --name vernemq1 -d micwy/vernemq:1.11.0-alpine
 
 This starts a new node that listens on 1883 for MQTT connections and on 8080 for MQTT over websocket connections. However, at this moment the broker won't be able to authenticate the connecting clients. To allow anonymous clients use the ```DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on``` environment variable.
 
-    docker run -e "DOCKER_VERNEMQ_ACCEPT_EULA=yes" -e "DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on" --name vernemq1 -d vernemq/vernemq
+    docker run -e "DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on" --name vernemq1 -d micwy/vernemq:1.11.0-alpine
 
 #### Autojoining a VerneMQ cluster
 
 This allows a newly started container to automatically join a VerneMQ cluster. Assuming you started your first node like the example above you could autojoin the cluster (which currently consists of a single container 'vernemq1') like the following:
 
-    docker run -e "DOCKER_VERNEMQ_ACCEPT_EULA=yes" -e "DOCKER_VERNEMQ_DISCOVERY_NODE=<IP-OF-VERNEMQ1>" --name vernemq2 -d vernemq/vernemq
+    docker run -e "DOCKER_VERNEMQ_DISCOVERY_NODE=<IP-OF-VERNEMQ1>" --name vernemq2 -d micwy/vernemq:1.11.0-alpine
 
 (Note, you can find the IP of a docker container using `docker inspect <containername/cid> | grep \"IPAddress\"`).
 
@@ -78,12 +78,8 @@ When enabling Kubernetes autoclustering, don't set ```DOCKER_VERNEMQ_DISCOVERY_N
 >
 > ```text
 > kubectl logs vernemq-0
->   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
->                                  Dload  Upload   Total   Spent    Left  Speed
->   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (51) SSL: certificate subject name 'client' does not match target host name 'kubernetes.default.svc.cluster.local'
->   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
->                                  Dload  Upload   Total   Spent    Left  Speed
->   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (51) SSL: certificate subject name 'client' does not match target host name 'kubernetes.default.svc.cluster.local'
+>   curl: (51) SSL: certificate subject name 'client' does not match target host name 'kubernetes.default.svc.cluster.local'
+>   curl: (51) SSL: certificate subject name 'client' does not match target host name 'kubernetes.default.svc.cluster.local'
 > vernemq failed to start within 15 seconds,
 > see the output of 'vernemq console' for more information.
 > If you want to wait longer, set the environment variable
@@ -101,11 +97,11 @@ Once Swarm is setup you can deploy a VerneMQ stack. The following snippet descri
     version: "3.7"
     services:
       vmq0:
-        image: vernemq/vernemq
+        image: micwy/vernemq:1.11.0-alpine
         environment:
           DOCKER_VERNEMQ_SWARM: 1
       vmq:
-        image: vernemq/vernemq
+        image: micwy/vernemq:1.11.0-alpine
         depends_on:
           - vmq0
         environment:
