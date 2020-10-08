@@ -1,4 +1,4 @@
-# docker-vernemq
+# docker-vernemq [![](https://img.shields.io/docker/pulls/micwy/vernemq.svg?v_DATE)](https://hub.docker.com/r/micwy/vernemq)
 
 *Note* This is a custom build of docker-vernemq, derived from the docker builds. Since version 1.10, vernemq requires payment for commercial use of their builds while custom builds can still be released unter Apache2 license.
 
