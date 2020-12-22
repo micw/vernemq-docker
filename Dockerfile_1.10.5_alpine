@@ -1,6 +1,6 @@
 FROM alpine:3.12 as build
 
-ENV VERNEMQ_VERSION="1.11.0"
+ENV VERNEMQ_VERSION="1.10.5"
 
 RUN \
   apk add \
