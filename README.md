@@ -19,7 +19,7 @@ VerneMQ is an Apache2 licensed distributed MQTT broker, developed in Erlang.
 ### Use custom images or accept the VerneMQ EULA
 
 *Important* Before you deploy with helm, swarm or any other docker tool, ensure that you use the custom images here and not the official images. Otherwise you need to reand and accept the 
-[VerneMQ EULA](https://docs.vernemq.com/installation/accepting-the-vernemq-eula).
+[VerneMQ EULA](https://github.com/vernemq/vmq-docs/blob/1.12.3/installation/accepting-the-vernemq-eula.md).
 
 ### Using [Helm](https://helm.sh/) to deploy on [Kubernetes](https://kubernetes.io/)
 
