@@ -1,9 +1,9 @@
 # Changed: added a build container
-FROM alpine:3.16.2 as build
+FROM alpine:3.18 as build
 
-ENV VERNEMQ_VERSION="1.12.6.2"
-# Rel 1.12.6.2
-ENV VERNEMQ_DOCKER_VERSION="e8254f051543556c9f3de416fc22ffd8659e74c8"
+ENV VERNEMQ_VERSION="1.13.0"
+# Release 1.13.0
+ENV VERNEMQ_DOCKER_VERSION="1055f9d3a465242a9969cd8401050aa52ac68121"
 
 RUN \
   apk add \
@@ -31,7 +31,7 @@ RUN wget -O /vernemq/etc/vm.args https://github.com/vernemq/docker-vernemq/raw/$
 RUN chown -R 10000:10000 /vernemq
 RUN chmod 0755 /vernemq/bin/vernemq.sh
 
-FROM alpine:3.16.2
+FROM alpine:3.18
 
 # Changed: added tzdate
 RUN apk --no-cache --update --available upgrade && \
@@ -44,7 +44,7 @@ RUN apk --no-cache --update --available upgrade && \
 ENV DOCKER_VERNEMQ_KUBERNETES_LABEL_SELECTOR="app=vernemq" \
     DOCKER_VERNEMQ_LOG__CONSOLE=console \
     PATH="/vernemq/bin:$PATH" \
-    VERNEMQ_VERSION="1.12.6.2"
+    VERNEMQ_VERSION="1.13.0"
 WORKDIR /vernemq
 
 # Changed: removed COPY commands, replaced by CURL downloads above
