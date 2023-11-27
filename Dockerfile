@@ -2,6 +2,7 @@
 FROM alpine:3.18 as build
 
 ENV VERNEMQ_VERSION="1.13.0"
+ENV VERNEMQ_PULL_REQUEST="2221"
 # Release 1.13.0
 ENV VERNEMQ_DOCKER_VERSION="1055f9d3a465242a9969cd8401050aa52ac68121"
 
@@ -18,6 +19,10 @@ RUN \
 RUN git clone --depth 1 --branch ${VERNEMQ_VERSION} \
       https://github.com/vernemq/vernemq.git \
       /usr/src/vernemq
+
+RUN cd /usr/src/vernemq && \
+    git fetch origin pull/${VERNEMQ_PULL_REQUEST}/head:pull/${VERNEMQ_PULL_REQUEST} && \
+    git switch pull/${VERNEMQ_PULL_REQUEST}
 
 RUN cd /usr/src/vernemq && \
     make rel && \
@@ -44,7 +49,7 @@ RUN apk --no-cache --update --available upgrade && \
 ENV DOCKER_VERNEMQ_KUBERNETES_LABEL_SELECTOR="app=vernemq" \
     DOCKER_VERNEMQ_LOG__CONSOLE=console \
     PATH="/vernemq/bin:$PATH" \
-    VERNEMQ_VERSION="1.13.0"
+    VERNEMQ_VERSION="1.13.0-pr-${VERNEMQ_PULL_REQUEST}"
 WORKDIR /vernemq
 
 # Changed: removed COPY commands, replaced by CURL downloads above
