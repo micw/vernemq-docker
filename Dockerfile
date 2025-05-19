@@ -1,9 +1,8 @@
 # Changed: added a build container
-FROM alpine:3.18 as build
+FROM alpine:3.21 as build
 
-ENV VERNEMQ_VERSION="1.13.0"
-# Release 1.13.0
-ENV VERNEMQ_DOCKER_VERSION="1055f9d3a465242a9969cd8401050aa52ac68121"
+ENV VERNEMQ_VERSION="2.1.0"
+ENV VERNEMQ_DOCKER_VERSION="2.0.1"
 
 RUN \
   apk add \
@@ -23,7 +22,7 @@ RUN cd /usr/src/vernemq && \
     make rel && \
     mv _build/default/rel/vernemq /vernemq
 
-# Changed: The following line have been moved here (saves 1 layer in the image)
+# Changed: The following lines have been moved from image to build container (saves 1 layer in the image)
 RUN wget -O /vernemq/etc/vm.args https://github.com/vernemq/docker-vernemq/raw/${VERNEMQ_DOCKER_VERSION}/files/vm.args && \
     wget -O /vernemq/bin/vernemq.sh https://github.com/vernemq/docker-vernemq/raw/${VERNEMQ_DOCKER_VERSION}/bin/vernemq.sh && \
     wget -O /vernemq/bin/rand_cluster_node.escript https://github.com/vernemq/docker-vernemq/raw/${VERNEMQ_DOCKER_VERSION}/bin/rand_cluster_node.escript
@@ -31,9 +30,9 @@ RUN wget -O /vernemq/etc/vm.args https://github.com/vernemq/docker-vernemq/raw/$
 RUN chown -R 10000:10000 /vernemq
 RUN chmod 0755 /vernemq/bin/vernemq.sh
 
-FROM alpine:3.18
+FROM alpine:3.21
 
-# Changed: added tzdate
+# Changed: added openssl (was in the original debian Dockerfile but not in alpine) and tzdate
 RUN apk --no-cache --update --available upgrade && \
     apk add --no-cache ncurses-libs openssl libstdc++ jq curl bash snappy-dev nano tzdata && \
     addgroup --gid 10000 vernemq && \
@@ -44,7 +43,7 @@ RUN apk --no-cache --update --available upgrade && \
 ENV DOCKER_VERNEMQ_KUBERNETES_LABEL_SELECTOR="app=vernemq" \
     DOCKER_VERNEMQ_LOG__CONSOLE=console \
     PATH="/vernemq/bin:$PATH" \
-    VERNEMQ_VERSION="1.13.0"
+    VERNEMQ_VERSION="2.1.0"
 WORKDIR /vernemq
 
 # Changed: removed COPY commands, replaced by CURL downloads above
